@@ -99,8 +99,8 @@
         <div class="group" style="margin-top: -35px; margin-bottom: -55px; transform: translateX(0px);">
             <img src="card1-text.svg" class="base" alt="Карточка 1" style="width: 430px;">
             
-            <!-- КНОПКА 1 (Установка команды) -->
-            <a href="https://www.icloud.com/shortcuts/942141b332544091a031b88b27360044" target="_blank" class="btn-link" style="left: 55px; top: 204px;">
+            <!-- КНОПКА 1 (Установка команды по новой ссылке) -->
+            <a href="https://www.icloud.com/shortcuts/a297c87152ea4a61b49ca4315aeb89b2" target="_blank" class="btn-link" style="left: 55px; top: 204px;">
                 <img src="btn1.svg" alt="Установить" style="width: 320px; display: block;">
             </a>
         </div>
@@ -134,9 +134,10 @@
             lastTouchEnd = now;
         }, { passive: false });
 
-        // 3. Быстрый запуск, если открыли с домашнего экрана (PWA)
+        // 3. Быстрый запуск "Козел игра", если открыли с домашнего экрана (PWA)
         if (window.navigator.standalone === true) {
-            window.location.href = "shortcuts://run-shortcut?name=%D0%9A%D0%BE%D0%B7%D0%B5%D0%BB";
+            // Название "Козел игра" закодировано для адресной строки
+            window.location.href = "shortcuts://run-shortcut?name=%D0%9A%D0%BE%D0%B7%D0%B5%D0%BB%20%D0%B8%D0%B3%D1%80%D0%B0";
         }
     </script>
 </body>
