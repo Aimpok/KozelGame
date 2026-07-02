@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- user-scalable=no частично блокирует зум -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Игра Козел</title>
     
     <!-- Метатеги PWA для iOS -->
@@ -12,55 +13,69 @@
     <link rel="apple-touch-icon" href="icon.png">
     
     <style>
-        /* Сбрасываем все отступы браузера */
+        /* Сбрасываем отступы и ставим ГЛОБАЛЬНЫЙ ЗАПРЕТ на копирование */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            
+            /* Запрет на выделение текста/элементов */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            
+            /* Запрет меню "Сохранить/Копировать" при долгом нажатии в iOS */
+            -webkit-touch-callout: none;
+            
+            /* Запрет на перетаскивание картинок */
+            -webkit-user-drag: none;
         }
 
         body {
-            background-color: #E4E4E4; /* Единый фон на всю страницу */
+            background-color: #E4E4E4;
             display: flex;
-            justify-content: center; /* Привязка всего контента строго к центру */
+            justify-content: center;
             font-family: sans-serif;
-            overflow-x: hidden; /* Скрываем горизонтальный скролл */
+            overflow-x: hidden;
+            
+            /* Блокируем дабл-тап зум на уровне CSS, разрешая только скролл */
+            touch-action: pan-x pan-y;
         }
 
-        /* Центральная колонна, в которой лежат все элементы */
+        /* Чтобы картинки вообще не реагировали на долгие нажатия */
+        img {
+            pointer-events: none;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
             max-width: 450px;
-            padding-bottom: 60px; /* Отступ в самом низу страницы */
+            padding-bottom: 60px;
         }
 
-        /* Родительская группа для каждой плашки */
         .group {
-            position: relative; /* Удерживает кнопку внутри своих границ */
+            position: relative;
             display: flex;
             justify-content: center;
         }
 
-        /* Базовая картинка */
         .group img.base {
             display: block;
-            pointer-events: none; /* Чтобы картинка плашки не выделялась и не мешала кликать */
         }
 
-        /* Кликабельная кнопка поверх плашки */
         .btn-link {
             position: absolute;
             z-index: 10;
             display: block;
             transition: opacity 0.1s;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent; /* Убирает синий квадрат при клике на iOS */
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Эффект при нажатии на кнопку */
         .btn-link:active {
             opacity: 0.7;
         }
@@ -84,40 +99,42 @@
         <div class="group" style="margin-top: -35px; margin-bottom: -55px; transform: translateX(0px);">
             <img src="card1-text.svg" class="base" alt="Карточка 1" style="width: 430px;">
             
-            <!-- КНОПКА 1 (Установка команды iCloud) -->
+            <!-- КНОПКА 1 (Установка команды) -->
             <a href="https://www.icloud.com/shortcuts/942141b332544091a031b88b27360044" target="_blank" class="btn-link" style="left: 55px; top: 204px;">
-                <img src="btn1.svg" alt="Установить команду" style="width: 320px; display: block;">
+                <img src="btn1.svg" alt="Установить" style="width: 320px; display: block;">
             </a>
         </div>
 
         <!-- КАРТОЧКА 2 -->
-        <!-- Кнопка удалена, осталась только базовая плашка -->
         <div class="group" style="margin-top: 0px; margin-bottom: -55px; transform: translateX(0px);">
             <img src="card2-text.svg" class="base" alt="Карточка 2" style="width: 430px;">
         </div>
 
-        <!-- КАРТОЧКА 3 (Кнопки нет, только плашка) -->
+        <!-- КАРТОЧКА 3 -->
         <div class="group" style="margin-top: 0px; margin-bottom: 0px; transform: translateX(0px);">
             <img src="card3-text.svg" class="base" alt="Карточка 3" style="width: 430px;">
         </div>
 
     </div>
 
-    <!-- Скрипт для работы логики PWA/Shortcuts -->
+    <!-- СКРИПТЫ ЗАЩИТЫ И ЛОГИКИ -->
     <script>
-        // Функция вызова меню "Поделиться" (оставил на всякий случай, если решишь вернуть кнопку)
-        function openShareMenu() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Игра Козел',
-                    url: window.location.href
-                }).catch(err => console.log(err));
-            } else {
-                alert("Нажми на иконку квадрата со стрелкой (в самом низу экрана Safari), чтобы вручную добавить ярлык на экран Домой.");
-            }
-        }
+        // 1. ПОЛНЫЙ ЗАПРЕТ контекстного меню (правая кнопка мыши / долгое удержание)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
 
-        // Логика быстрого запуска, если открыли уже готовый ярлык с домашнего экрана
+        // 2. ПРОГРАММНЫЙ ЗАПРЕТ DOUBLE-TAP ZOOM (двойного нажатия)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            let now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault(); // Если второй тап был быстрее 300мс — блокируем зум
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+
+        // 3. Быстрый запуск, если открыли с домашнего экрана (PWA)
         if (window.navigator.standalone === true) {
             window.location.href = "shortcuts://run-shortcut?name=%D0%9A%D0%BE%D0%B7%D0%B5%D0%BB";
         }
