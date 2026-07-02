@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Игра Козел</title>
     
-    <!-- Метатеги PWA для iOS из твоего старого кода -->
+    <!-- Метатеги PWA для iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Козел">
@@ -91,13 +91,9 @@
         </div>
 
         <!-- КАРТОЧКА 2 -->
+        <!-- Кнопка удалена, осталась только базовая плашка -->
         <div class="group" style="margin-top: 0px; margin-bottom: -55px; transform: translateX(0px);">
             <img src="card2-text.svg" class="base" alt="Карточка 2" style="width: 430px;">
-            
-            <!-- КНОПКА 2 (Вызов меню "Поделиться" через JS) -->
-            <a href="#" onclick="openShareMenu(); return false;" class="btn-link" style="left: 55px; top: 204px;">
-                <img src="btn2.svg" alt="Вывести иконку игры" style="width: 320px; display: block;">
-            </a>
         </div>
 
         <!-- КАРТОЧКА 3 (Кнопки нет, только плашка) -->
@@ -107,9 +103,9 @@
 
     </div>
 
-    <!-- Твой старый скрипт для работы кнопок -->
+    <!-- Скрипт для работы логики PWA/Shortcuts -->
     <script>
-        // Функция вызова меню "Поделиться" прямо со страницы
+        // Функция вызова меню "Поделиться" (оставил на всякий случай, если решишь вернуть кнопку)
         function openShareMenu() {
             if (navigator.share) {
                 navigator.share({
